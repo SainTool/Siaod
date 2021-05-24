@@ -1,85 +1,77 @@
 #include <iostream>
 #include <time.h>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
-
 //
-template<typename T>
 class List
 {
 public:
 	List();
 	~List();
-	void Push_up(T data);
+	void Push_up(int data);
 	void Pop_down();
 	void Cleaning();
 	int GetSize() { return Size; }
 
-	T& operator[](const int index);
+	int& operator[](const int index);
 private:
 
-
-	template<typename T>
 	class Node {
 	public:
 		Node* pNext;
-		T data;
-		Node(T data, Node* pNext=nullptr)
+		int data;
+		Node(int data, Node* pNext=nullptr)
 		{
 			this->data = data;
 			this->pNext = pNext;
 		}
 	};
 	int Size;
-	Node<T> *head;
+	Node *head;
 };
 
-template<typename T>
-List<T>::List()
+List::List()
 {
 	Size = 0;
 	head = nullptr;
 }
-template<typename T>
-List<T>::~List()
+List::~List()
 {
+  Cleaning();
 }
-template<typename T>
-void List<T>::Push_up(T data)
+void List::Push_up(int data)
 {
 	if (head == nullptr) {
-		head = new Node<T>(data);
+		head = new Node(data);
 	}
 	else
 	{
-		Node<T>* current = this->head;
+		Node* current = this->head;
 		while (current->pNext != nullptr) {
 			current = current->pNext;
 		}
-		current->pNext = new Node<T>(data);
+		current->pNext = new Node(data);
 	}
 	Size++;
 }
-template<typename T>
-void List<T>::Pop_down()
+void List::Pop_down()
 {
-	Node<T> *temp = head;
+	Node *temp = head;
 	head = head->pNext;
 	delete temp;
 	Size--;
 }
-template<typename T>
-void List<T>::Cleaning()
+void List::Cleaning()
 {
 	while (Size) {
 		Pop_down();
 	}
 }
-template<typename T>
-T& List<T>::operator[](const int index)
+int& List::operator[](const int index)
 {
-	int counter = 0; // schetchic
-	Node<T>* current = this->head;
+	int counter = 0; // счётчик
+	Node* current = this->head;
 	while (current !=nullptr)
 	{
 		if (counter == index) {
@@ -93,25 +85,49 @@ T& List<T>::operator[](const int index)
 //
 
 int main() {
-	List<int> lst;
-	
-	for (int i = 0; i < 10; i++)
-	{
+  srand(time(NULL));
+	List lst;
+	int sum=0;
+  int x;
+	for (int i = 0; i < 10; i++){
 		lst.Push_up(i+1);//добавление элемента
 	}
+  for (int i = 0; i < lst.GetSize(); i++)
+	{
+		cout << lst[i]<<" ";
+    sum+=lst[i];
+	}
+  cout<<endl<<sum<<" - kontrol sum"<<endl;
+  sum=0;
+  lst.Cleaning();
+  for (int i = 10; i>0;i--){
+      lst.Push_up(i);
+  }
+  for (int i = 0; i < lst.GetSize(); i++)
+	{
+		cout << lst[i]<<" ";
+    sum+=lst[i];
+	}
+  cout<<endl<<sum<<" - kontrol sum"<<endl;
+  sum=0;
+  lst.Cleaning();
+  for (int i = 0; i<lst.GetSize();i++){
+    x = rand() %10+1 ;
+    cout<<x;
+    lst.Push_up(x);
+    sum+=lst[i];
+  }
+  cout<<endl;
+  for (int i = 0; i < lst.GetSize(); i++)
+	{
+		cout << lst[i]<<" ";
+	}
+  cout<<endl<<sum<<" - kontrol sum"<<endl;
+  sum=0;
+  lst.Cleaning();
 	cout << lst.GetSize() << endl;//вывод размера
-	for (int i = 0; i < lst.GetSize(); i++)
-	{
-		cout << lst[i];
-	}
-	lst.Pop_down();//удаление 1-го элемента
-	for (int i = 0; i < lst.GetSize(); i++)
-	{
-		cout << lst[i];
-	}
 	cout << endl;
 	lst.Cleaning();
 	cout << lst.GetSize();
-	system("pause");
 	return 0;
 }
