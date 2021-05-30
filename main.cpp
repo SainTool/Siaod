@@ -1,19 +1,12 @@
 #include <iostream>
 using namespace std;
-
-    void generate_rand(int n);
-    void generate_inc(int n);
-    void generate_dec(int n);
-    void print();
-    int control_sum();
-    int run_number();
-    void clear();
-    struct Data {
-        int num;
-        Data* next = NULL;
-    };
-    Data* head;
-    void print_node(Data* tmp);
+void clear();
+struct Data {
+    int num;
+    Data* next = NULL;
+};
+Data* head;
+void print_node(Data* tmp);
 
 void generate_rand(int n) {
     if (n <= 0)
@@ -128,9 +121,9 @@ int main() {
 
     srand(time(NULL));
 
-   generate_rand(n);
-   print();
-    cout << "Control Sum = " <<control_sum() << endl;
+    generate_rand(n);
+    print();
+    cout << "Control Sum = " << control_sum() << endl;
     cout << "Run number = " << run_number() << endl << endl;
 
     generate_dec(n);
