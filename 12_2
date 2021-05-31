@@ -8,209 +8,210 @@ int C = 0;
 int M = 0;
 
 struct Node {
-  Node *next = nullptr;
-  int data;
+    Node* next = nullptr;
+    int data;
 };
 
 struct Queue {
-  Node *head;
-  Node *tail;
+    Node* head;
+    Node* tail;
 };
 
-void print_list(Node *head) {
-  Node *p = head;
-  while (p) {
-    cout << p->data << " ";
-    p = p->next;
-  }
-  cout << endl;
-}
-
-Node *fill_inc(int n) {
-  Node *p = nullptr, *head = nullptr;
-  for (int i = n - 1; i >= 0; i--) {
-    p = new Node;
-    p->data = i;
-    p->next = head;
-    head = p;
-  }
-  return head;
-}
-
-Node *fill_dec(int n) {
-  Node *p = nullptr, *head = nullptr;
-  for (int i = 0; i < n; i++) {
-    p = new Node;
-    p->data = i;
-    p->next = head;
-    head = p;
-  }
-  return head;
-}
-
-Node *fill_rand(int n) {
-  Node *p = nullptr, *head = nullptr;
-  srand(time(nullptr));
-  for (int i = 0; i < n; i++) {
-    p = new Node;
-    p->data = rand() % (2 * n);
-    p->next = head;
-    head = p;
-  }
-  return head;
-}
-
-int check_sum(Node *head) {
-  int sum = 0;
-  Node *p = head;
-  while (p) {
-    sum += p->data;
-    p = p->next;
-  }
-  return sum;
-}
-
-int run_number(Node *head) {
-  int i = 1;
-  Node *p = head;
-  while (p->next) {
-
-    if (p->data > p->next->data) {
-      i += 1;
+void print_list(Node* head) {
+    Node* p = head;
+    while (p) {
+        cout << p->data << " ";
+        p = p->next;
     }
-    p = p->next;
-  }
-  return i;
+    cout << endl;
 }
 
-void clear(Node *&head) {
-  if (head == nullptr)
-    return;
-  Node *p = head, *temp;
-  while (p) {
-    temp = p;
-    p = p->next;
-    delete temp;
-  }
-  head = nullptr;
-}
-
-void split(Node *head, Node *&a, Node *&b, int &n) { //расщепление списка 
-  Node *k, *p;//рабочие указатели
-  a = head, b = head->next;
-  n = 1;
-  k = a;
-  p = b;
-  while (p!=NULL) {
-    n++;
-    k->next = p->next;
-    k = p;
-    p = p->next;
-  }
-}
-
-void merge(Node *&a, int q, Node *&b, int r, Queue &c) {
-
-  while (q != 0 && r != 0) {
-    C++;
-    if (a->data <= b->data) {
-      c.tail->next = a;
-      c.tail = a;
-      a = a->next;
-      M++;
-      q--;
-    } else {
-      c.tail->next = b;
-      c.tail = b;
-      b = b->next;
-      M++;
-      r--;
+Node* fill_inc(int n) {
+    Node* p = nullptr, * head = nullptr;
+    for (int i = n - 1; i >= 0; i--) {
+        p = new Node;
+        p->data = i;
+        p->next = head;
+        head = p;
     }
-  }
-  while (q > 0) {
-    c.tail->next = a;
-    c.tail = a;
-    a = a->next;
-    M++;
-    q--;
-  }
-  while (r > 0) {
-    c.tail->next = b;
-    c.tail = b;
-    b = b->next;
-    M++;
-    r--;
-  }
+    return head;
 }
 
-int get_size(Node *head) {
-  int size = 0;
-  Node *p = head;
-  while (p) {
-    size++;
-    p = p->next;
-  }
-  return size;
-}
-
-void merge_sort(Node *&head) {
-  M = 0;
-  C = 0;
-  int n = 0;
-  Node *a = NULL, *b = NULL, *head_p = head;
-  int p, i, m, q, r;//q-фактический размер серии в списке а,p-фактический размер серии в списке b,p-предполагаемый размер серии
-  //m-текущее кол-во эл.в списках a и b,i-номер рабочей очереди
-  split(head_p, a, b, n);//расщепление списка
-  M += n;
-  Queue c[2];
-  p = 1;
-  c[0].tail = (Node *)&c[0].head;
-  while (p < n) {//инициализация очередей
-    c[0].tail = (Node *)&c[0].head; 
-    c[1].tail = (Node *)&c[1].head;
-    i = 0, m = n;
-    while (m > 0) { //определение фактического размера серии
-      if (m >= p)
-        q = p;
-      else
-        q = m;
-      m -= q;
-      if (m >= p)
-        r = p;
-      else
-        r = m;
-      m -= r;
-      merge(a, q, b, r, c[i]);//слияние
-      i = 1 - i;
+Node* fill_dec(int n) {
+    Node* p = nullptr, * head = nullptr;
+    for (int i = 0; i < n; i++) {
+        p = new Node;
+        p->data = i;
+        p->next = head;
+        head = p;
     }
-    a = c[0].head, b = c[1].head;
-    p *= 2;
-  }
-  c[0].tail->next = NULL;
-  head = c[0].head;
+    return head;
+}
+
+Node* fill_rand(int n) {
+    Node* p = nullptr, * head = nullptr;
+    srand(time(nullptr));
+    for (int i = 0; i < n; i++) {
+        p = new Node;
+        p->data = rand() % (2 * n);
+        p->next = head;
+        head = p;
+    }
+    return head;
+}
+
+int check_sum(Node* head) {
+    int sum = 0;
+    Node* p = head;
+    while (p) {
+        sum += p->data;
+        p = p->next;
+    }
+    return sum;
+}
+
+int run_number(Node* head) {
+    int i = 1;
+    Node* p = head;
+    while (p->next) {
+
+        if (p->data > p->next->data) {
+            i += 1;
+        }
+        p = p->next;
+    }
+    return i;
+}
+
+void clear(Node*& head) {
+    if (head == nullptr)
+        return;
+    Node* p = head, * temp;
+    while (p) {
+        temp = p;
+        p = p->next;
+        delete temp;
+    }
+    head = nullptr;
+}
+
+void split(Node* head, Node*& a, Node*& b, int& n) { //расщепление списка 
+    Node* k, * p;//рабочие указатели
+    a = head, b = head->next;
+    n = 1;
+    k = a;
+    p = b;
+    while (p != NULL) {
+        n++;
+        k->next = p->next;
+        k = p;
+        p = p->next;
+    }
+}
+
+void merge(Node*& a, int q, Node*& b, int r, Queue& c) {
+
+    while (q != 0 && r != 0) {
+        C++;
+        if (a->data <= b->data) {
+            c.tail->next = a;
+            c.tail = a;
+            a = a->next;
+            M++;
+            q--;
+        }
+        else {
+            c.tail->next = b;
+            c.tail = b;
+            b = b->next;
+            M++;
+            r--;
+        }
+    }
+    while (q > 0) {
+        c.tail->next = a;
+        c.tail = a;
+        a = a->next;
+        M++;
+        q--;
+    }
+    while (r > 0) {
+        c.tail->next = b;
+        c.tail = b;
+        b = b->next;
+        M++;
+        r--;
+    }
+}
+
+int get_size(Node* head) {
+    int size = 0;
+    Node* p = head;
+    while (p) {
+        size++;
+        p = p->next;
+    }
+    return size;
+}
+
+void merge_sort(Node*& head) {
+    M = 0;
+    C = 0;
+    int n = 0;
+    Node* a = NULL, * b = NULL, * head_p = head;
+    int p, i, m, q, r;//q-фактический размер серии в списке а,p-фактический размер серии в списке b,p-предполагаемый размер серии
+    //m-текущее кол-во эл.в списках a и b,i-номер рабочей очереди
+    split(head_p, a, b, n);//расщепление списка
+    M += n;
+    Queue c[2];
+    p = 1;
+    c[0].tail = (Node*)&c[0].head;
+    while (p < n) {//инициализация очередей
+        c[0].tail = (Node*)&c[0].head;
+        c[1].tail = (Node*)&c[1].head;
+        i = 0, m = n;
+        while (m > 0) { //определение фактического размера серии
+            if (m >= p)
+                q = p;
+            else
+                q = m;
+            m -= q;
+            if (m >= p)
+                r = p;
+            else
+                r = m;
+            m -= r;
+            merge(a, q, b, r, c[i]);//слияние
+            i = 1 - i;
+        }
+        a = c[0].head, b = c[1].head;
+        p *= 2;
+    }
+    c[0].tail->next = NULL;
+    head = c[0].head;
 }
 
 int main() {
-    cout << "               факт                    теор" << endl;
-    cout << "n          inc     dec     rand" << endl;
-  for(int n = 100; n <= 500; n += 100) {
+    cout << "\t\tфакт\t\tтеор" << endl;
+    cout << "n\tinc\tdec\trand" << endl;
+    for (int n = 100; n <= 500; n += 100) {
 
-      Node *list = fill_inc(n);
-      merge_sort(list);
-      int CM_inc = C + M;
-      clear(list);
+        Node* list = fill_inc(n);
+        merge_sort(list);
+        int CM_inc = C + M;
+        clear(list);
 
-      list = fill_dec(n);
-      merge_sort(list);
-      int CM_dec = C + M;
-      clear(list);
+        list = fill_dec(n);
+        merge_sort(list);
+        int CM_dec = C + M;
+        clear(list);
 
-      list = fill_rand(n);
-      merge_sort(list);
-      int CM_rand = C + M;
-      clear(list);
+        list = fill_rand(n);
+        merge_sort(list);
+        int CM_rand = C + M;
+        clear(list);
 
-    cout << n << "       " << CM_inc << "     " << CM_dec << "     " << CM_rand << "        " <<  2*n*ceil(log2(n)) + n <<endl;
-  }
-  return 0;
+        cout << n << "\t" << CM_inc << "\t" << CM_dec << "\t" << CM_rand << "\t" << 2 * n * ceil(log2(n)) + n << endl;
+    }
+    return 0;
 }
