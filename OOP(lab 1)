@@ -1,0 +1,25 @@
+#include <iostream>
+#include <ctime>
+using namespace std;
+int* genRandArray(int size, int maxValue) {
+    int* a = new int(size + 1);
+    a[0] = size;
+    cout << a[0] << ": ";
+    for (int i = 1; i <= size; ++i)
+        a[i] = rand() % maxValue;
+    return(a);
+}
+void print(int* arr) {
+    for (int i = 1; i <= arr[0]; i++) {
+        cout << arr[i] << " ";
+    }
+}
+int main() {
+    srand(time(0));
+    int size = rand() % 10;
+    int maxValue = 100;
+    int* arr = genRandArray(size, maxValue);
+    print(arr);
+    //очистка выделенной памяти
+    delete arr;
+}
