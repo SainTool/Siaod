@@ -39,7 +39,7 @@ void convert_rightUP_leftDOWN(int** matrix, int* massiv, int size) {
     for (int i = 1; i < size; ++i) {
         for (int j = 0; j + i < size; ++j) {
             cout << matrix[i+j][j] << " ";
-            massiv[place] = matrix[i][j + i];
+            massiv[place] = matrix[i + j][j];
             ++place;
         }
         cout << endl;
