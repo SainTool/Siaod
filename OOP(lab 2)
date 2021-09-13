@@ -1,0 +1,79 @@
+#include <iostream>
+#include <ctime>
+using namespace std;
+int* genRandArray(int size) {
+    int* a = new int[size * size];
+    return(a);
+}
+int** genRandMatrix(int size, int intmaxValue) {
+    int** a = new int*[size];
+    for (int i = 0; i < size; ++i) {
+        a[i] = new int[size];
+    }
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            a[i][j] = rand() % intmaxValue;
+        }
+    }
+    return(a);
+}
+void printMatrix(int** matrix, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void convert_rightUP_leftDOWN(int** matrix, int* massiv, int size) {
+    int place = 0;
+    for (int j = size - 1; j >= 0; --j) { // vibor stolba
+        for (int i = 0; j + i < size; ++i) { // zapis right - center
+            cout << matrix[i][j+i] << " ";
+            massiv[place] = matrix[i][j + i];
+            ++place;
+        }
+        cout << endl;
+    }
+    for (int i = 1; i < size; ++i) {
+        for (int j = 0; j + i < size; ++j) {
+            cout << matrix[i+j][j] << " ";
+            massiv[place] = matrix[i][j + i];
+            ++place;
+        }
+        cout << endl;
+    }
+}
+void convert_snake_inside_outside(int** matrix, int* massiv, int size) {
+    int place = 0; //4 цикла вверх - влево - низ - вправо 
+    for (int laps = size / 2; laps < size; ++laps) {// движение вверх
+        for (int i = size / 2; i < size; ++i) {
+
+        }
+    }
+}
+void print(int* arr, int size) {
+    for (int i = 0; i < size; ++i) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+int main() {
+    srand(time(0));
+    int size = 7;
+    int maxValue = 100;
+    int* massiv = genRandArray(size);
+    int** matrix = genRandMatrix(size, maxValue);
+    printMatrix(matrix, size);
+    convert_rightUP_leftDOWN(matrix, massiv, size);
+    print(massiv, size * size);
+    //convert_snake_inside_outside(matrix, massiv, size);
+    //print(massiv, size * size);
+    cout << int(size /2);
+
+    //clean
+    for (int i = 0; i < size; ++i)
+        delete[] matrix[i];
+    delete[] matrix;
+}
