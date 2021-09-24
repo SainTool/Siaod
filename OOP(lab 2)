@@ -1,18 +1,19 @@
 #include <iostream>
 #include <ctime>
+#include <vector>
 using namespace std;
 int* genRandArray(int size) {
     int* a = new int[size * size];
     return(a);
 }
-int** genRandMatrix(int size, int intmaxValue) {
+int** genRandMatrix(int size, int maxValue) {
     int** a = new int* [size];
     for (int i = 0; i < size; ++i) {
         a[i] = new int[size];
     }
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
-            a[i][j] = rand() % intmaxValue;
+            a[i][j] = rand() % maxValue;
         }
     }
     return(a);
@@ -137,7 +138,7 @@ void printNumMatrix(int** matrix, int size) {
 }
 int main() {
     srand(time(0));
-    int size = 7;
+    int size = 4;
     int maxValue = 100;
     int* massiv = genRandArray(size);
     int** matrix = genRandMatrix(size, maxValue);
@@ -148,9 +149,33 @@ int main() {
     print(massiv, size);
     convert_snake_outside_inside(matrix, massiv, size);
     print(massiv, size);
+    //ex 2
+    size = rand() % 10;
+    int** matrixX = new int* [size];
+    for (int i = 0; i < size; ++i) {
+        int sizeY = rand() % 10;
+        matrixX[i] = new int[sizeY];
+        for (int j = 0; j < sizeY; ++j) {
+            matrixX[i][j] = rand() % maxValue;
+            cout << matrixX[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    vector <vector <int>> mas(5);
+    for (int i = 0; i < 5; ++i) {
+        mas.resize(5);
+    }
+    for (int i = 0; i < mas.size(); i++) {
+        for (int j = 0; j < mas[i].size(); ++j) {
+            mas[i][j] = 1;
+            cout << mas[i][j];
+        }
+        cout << endl;
+    }
     //clean
-    for (int i = 0; i < size; ++i)
-        delete[] matrix[i];
-    delete[] matrix;
-    delete[] massiv;
+    //for (int i = 0; i < size; ++i)
+     //   delete[] matrix[i];
+    //delete[] matrix;
+    //delete[] massiv;
 }
