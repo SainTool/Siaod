@@ -6,7 +6,7 @@ int* genRandArray(int size) {
     return(a);
 }
 int** genRandMatrix(int size, int intmaxValue) {
-    int** a = new int*[size];
+    int** a = new int* [size];
     for (int i = 0; i < size; ++i) {
         a[i] = new int[size];
     }
@@ -25,7 +25,7 @@ void printMatrix(int** matrix, int size) {
         cout << endl;
     }
 }
- 
+
 void convert_rightUP_leftDOWN(int** matrix, int* massiv, int size) {
     int place = 0;
     for (int j = size - 1; j >= 0; --j) { // vibor stolba
@@ -47,44 +47,72 @@ void convert_rightUP_leftDOWN(int** matrix, int* massiv, int size) {
     //cout << endl;
 }
 void convert_snake_inside_outside(int** matrix, int* massiv, int size) { //4 цикла вверх - влево - низ - вправо 
-    cout << size/2<< endl;
-    int j,i;
-    for (int laps = 0; laps < size / 2; ++laps) {
-        for (i = size / 2 + laps , j = i; i > size/2 - 1 - laps; --i) {// движение вверх
-            cout << matrix[i][j] << " ";
+    cout << size / 2 << endl;
+    int j, i, parity;
+    int k = 0;
+    if (size % 2 == 0)//проверка чётности матрицы
+        parity = 0;
+    else
+        parity = 1;
+    for (int laps = 0; laps < size / 2 + parity; ++laps) {
+        for (i = size / 2 + laps, j = i; i > size / 2 - 1 - laps && j !=size; --i) {// up
+            massiv[k] = matrix[i][j];
+            k++;
+            //cout << matrix[i][j] << " "; вывод какое число записало
+            //cout << i << " " << j << endl; какой номер идёт
         }
         cout << endl;
-        for (j = size / 2 + laps, i=size/2 - 1 - laps;j > size/2 - 1 - laps ; j--){
-            cout << matrix[i][j] << " ";
+        for (j = size / 2 + laps, i = size / 2 - 1 - laps; j > size / 2 - 1 - laps && i!=size; j--) {//left
+            if (i < 0 || j < 0)
+                break;
+            massiv[k] = matrix[i][j];
+            k++;
+            //cout << i << " " << j << endl;
         }
         cout << endl;
-        for (i = size / 2 - 1 - laps, j = size / 2 - 1 - laps; i <= size/2+1; i++){
-            cout << matrix[i][j] << " ";
+        for (i = size / 2 - 1 - laps, j = size / 2 - 1 - laps; i < size / 2 + 1 + laps && j !=size; i++) {//down
+            if (i < 0 || j < 0)
+                break;
+            massiv[k] = matrix[i][j];
+            k++;
+            //cout << i << " " << j << endl;
         }
         cout << endl;
-        for (j = size/2 -laps, i = size / 2 + 1 + laps; j < size/2+ 1+laps; j++){
-            cout << matrix[i][j] << " ";
+        for (j = size / 2 - 1- laps, i = size / 2 + 1 + laps; j < size / 2 + 1 + laps && i !=size; j++) {//right
+            if (i < 0 || j < 0)
+                break;
+            massiv[k] = matrix[i][j];
+            k++;
+            //cout << i << " " << j << endl;
         }
         cout << endl;
     }
-    cout<<endl;
+    cout << endl;
 }
 void print(int* arr, int size) {
-    for (int i = 0; i < size* size; i++) {
+    for (int i = 0; i < size * size; i++) {
         cout << arr[i] << " ";
     }
     cout << endl;
 }
+void printNumMatrix(int** matrix, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            cout << "[" << i << "]"<< "[" << j << "] ";
+        }
+        cout << endl;
+    }
+}
 int main() {
     srand(time(0));
-    int size = 6;
+    int size = 5;
     int maxValue = 100;
     int* massiv = genRandArray(size);
     int** matrix = genRandMatrix(size, maxValue);
     printMatrix(matrix, size);
-    cout << endl<< size<<endl;
     //convert_rightUP_leftDOWN(matrix, massiv, size);
     //print(massiv, size);
+    printNumMatrix(matrix, size);
     convert_snake_inside_outside(matrix, massiv, size);
     //clean
     for (int i = 0; i < size; ++i)
