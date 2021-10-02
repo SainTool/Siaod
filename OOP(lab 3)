@@ -1,0 +1,113 @@
+#include <SFML/Graphics.hpp>
+#include <ctime>
+#include "windows.h"
+#include <iostream>
+using namespace sf;
+using namespace std;
+const int Screen[2] = {600,600};
+const int NumberPixels = 100;
+class Pixels
+{
+private:
+    int naprX[NumberPixels];
+    int naprY[NumberPixels];
+    int plusX = 0;
+    int plusY = 0;
+public:
+    int posX[NumberPixels];
+    int posY[NumberPixels];
+    void Generate() {
+        for (int i = 0; i < NumberPixels; i++) {
+            posX[i] = rand() % Screen[0] - 10;
+            posY[i] = rand() % Screen[1] - 10;
+            naprY[i] = rand() % 2;
+            naprX[i] = rand() % 2;
+            //std::cout << i << ") posX[" << posX[i] << "] posY[" << posY[i] << "] napr" << napr[i] << std::endl;
+        }
+    }
+    void ex2() {
+        for (int i = 0; i < NumberPixels; i++) {
+            if (!naprY[i]) // 0 - up
+                plusY = -1;
+            else           // 1 -down
+                plusY = +1;
+
+            if (!naprX[i]) // 0 - left
+                plusX = -1;
+            else // 1 - right
+                plusX = +1;
+
+            if (posY[i] < 0) {
+                naprY[i] = 1;
+                plusY = 1;
+            }
+
+            if (posY[i] > Screen[1] - 10) {
+                naprY[i] = 0;
+                plusY = -1;
+            }
+
+            if (posX[i] < 0) {
+                naprX[i] = 1;
+                plusX = 1;
+            }
+
+            if (posX[i] > Screen[0] - 10) {
+                naprX[i] = 0;
+                plusX = -1;
+            }
+            posX[i] = posX[i] + plusX;
+            posY[i] = posY[i] + plusY;
+        }
+    }
+    void ex1() {
+        for (int i = 0; i < NumberPixels; i++) {
+            if (!naprX[i]) // 0 - left
+                plusX = -1;
+            else // 1 - right
+                plusX = +1;
+            if (posX[i] < 0) {
+                naprX[i] = 1;
+                plusX = 1;
+            }
+
+            if (posX[i] > Screen[0] - 10) {
+                naprX[i] = 0;
+                plusX = -1;
+            }
+            posX[i] = posX[i] + plusX;
+        }
+    }
+
+};
+
+
+int main()
+{
+    RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
+    RectangleShape linex(Vector2f(10, 10)); // pixel
+    linex.setFillColor(Color::White);
+    class Pixels pix;
+    pix.Generate();
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        pix.ex1();
+        //pix.ex2();
+        window.clear();
+        for (int i = 0; i < NumberPixels; i++) {
+            linex.setPosition(pix.posX[i], pix.posY[i]);
+            window.draw(linex);
+
+        }
+        Sleep(1);
+        window.display();
+    }
+
+    return 0;
+}
