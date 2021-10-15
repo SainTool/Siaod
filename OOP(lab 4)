@@ -1,0 +1,144 @@
+#include <SFML/Graphics.hpp>
+#include <ctime>
+#include "windows.h"
+#include <iostream>
+using namespace sf;
+using namespace std;
+const int Screen[2] = {600,600};
+const int NumberPixels = 100;
+RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
+class Pixels
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    RectangleShape Pixel() {
+        RectangleShape pixel(Vector2f(1, 1)); // пиксель
+        pixel.setPosition(25, 5);
+        return (pixel);
+    }
+};
+class Segments
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    RectangleShape Segment() {
+        RectangleShape segment(Vector2f(100, 1)); // отрезок
+        segment.setPosition(25, 15);
+        return (segment);
+    }
+};
+class Circles
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    CircleShape Circle() {
+        CircleShape circle(50); // отрезок
+        circle.setPosition(50, 50);
+        return (circle);
+    }
+};
+class Rectangles
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    RectangleShape Rectangle() {
+        RectangleShape rectangle(Vector2f(50, 25)); // отрезок
+        rectangle.setPosition(50, 350);
+        return (rectangle);
+    }
+};
+class Triangles
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    CircleShape Triangle() {
+        CircleShape triangle(50, 3); // отрезок
+        triangle.setPosition(150, 350);
+        return (triangle);
+    }
+};
+class Ellipses
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    CircleShape Ellipse() {
+        CircleShape ellipse(100, 3); // отрезок
+        ellipse.setPosition(50, 350);
+        return (ellipse);
+    }
+};
+class Rhombs
+{
+private:
+    int posX;
+    int posY;
+    int angle;
+    int RandPredel = 10;
+public:
+    CircleShape Rhomb() {
+        CircleShape rhomb(50, 4); // отрезок
+        rhomb.setPosition(250, 350);
+        return (rhomb);
+    }
+};
+void draw() {
+
+    RectangleShape linex(Vector2f(10, 10)); // pixel
+    linex.setFillColor(Color::White);
+    class Pixels pix;
+    class Segments seg;
+    class Circles cir;
+    class Rectangles rec;
+    class Triangles tri;
+    class Ellipses ell;
+    class Rhombs rh;
+    cir.Circle();
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        window.clear();
+        window.draw(pix.Pixel());
+        window.draw(seg.Segment());
+        window.draw(cir.Circle());
+        window.draw(rec.Rectangle());
+        window.draw(tri.Triangle());
+        //window.draw(ell.Ellipse());
+        window.draw(rh.Rhomb());
+        Sleep(1);
+        window.display();
+    }
+}
+int main()
+{
+    
+    draw();
+}
