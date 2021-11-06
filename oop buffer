@@ -1,386 +1,61 @@
-#include <SFML/Graphics.hpp>
-#include <ctime>
-#include "windows.h"
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include "windows.h"
+#include <time.h>
 using namespace sf;
-using namespace std;
-const int Screen[2] = { 600,600 };
-int ex1 = false;
-class Pixels
-{
-private:
-    int dimensions = 1; // размер фигуры
-    //int live =0;
-    int angle = 0;
-    int napr = rand() % 4;
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - dimensions)//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - dimensions) // down wall
-            napr = 0;
-        /*if (live >= 100) {
-            live = 0;
-            napr = rand() % 4;
-        }
-        live++;*/
-
-    }
-    int posX;
-    int posY;
-public:
-    Pixels() {
-        posX = rand() % Screen[0];
-        posY = rand() % Screen[1];
-    }
-    RectangleShape Pixel() {
-        RectangleShape pixel(Vector2f(1, 1)); // пиксель
-        if (ex1) {
-            move();
-            pixel.setPosition(posX, posY);
-        }
-        else {
-            pixel.setPosition(posX, posY);
-            pixel.setOrigin(1 / 2, 1 / 2);
-            pixel.rotate(angle);
-            angle++;
-        }
-        return (pixel);
-    }
-};
-
-class Segments
-{
-private:
-    int dimensions[2] = { 50, 1 }; // размер фигуры
-    int angle = 0;
-    int napr = rand() % 4;
-    int RandPredel = 10;
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - dimensions[0])//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - dimensions[1]) // down wall
-            napr = 0;
-    }
-public:
-    int posX = rand() % Screen[0] - dimensions[0];
-    int posY = rand() % Screen[1] - dimensions[1];
-
-    RectangleShape Segment() {
-        RectangleShape segment(Vector2f(dimensions[0], dimensions[1])); // отрезок
-        if (ex1) {
-            move();
-            segment.setPosition(posX, posY);
-        }
-        else {
-            segment.setPosition(400, 550);
-            segment.setOrigin(dimensions[0] / 2, dimensions[1] / 2);
-            segment.rotate(angle);
-            angle++;
-        }
-        return (segment);
-    }
-};
-class Circles
-{
-private:
-    int dimensions[2] = { 50, dimensions[0] * 2 }; // размер фигуры
-    int angle = 0;
-    int napr = rand() % 4;
-    int RandPredel = 10;
-
-    void move(int diametr) {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - diametr)//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - diametr) // down wall
-            napr = 0;
-    }
-public:
-    int posX = rand() % Screen[0] - dimensions[1];
-    int posY = rand() % Screen[1] - dimensions[1];
-    CircleShape Circle() {
-        // окружность
-        CircleShape circle(dimensions[0]);
-        if (ex1) {
-            circle.setPosition(posX, posY);
-            move(circle.getRadius() * 2);
-        }
-        else {
-            circle.setPosition(350, 400);
-            circle.setOrigin(dimensions[1] / 2, dimensions[1] / 2);
-            circle.rotate(angle);
-            angle++;
-        }
-        return (circle);
-    }
-};
-class Rectangles
-{
-private:
-    int dimensions[2] = { 50, 25 }; // размер фигуры
-    int angle = 0;
-    int napr = rand() % 4;
-    int RandPredel = 10;
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - dimensions[0])//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - dimensions[1]) // down wall
-            napr = 0;
-    }
-public:
-    int posX = rand() % (Screen[0] - 150);
-    int posY = rand() % (Screen[1] - 150);
-    RectangleShape Rectangle() {
-        RectangleShape rectangle(Vector2f(dimensions[0], dimensions[1])); // прямоугольник
-        if (ex1) {
-            move();
-            rectangle.setPosition(posX, posY);
-        }
-        else {
-            rectangle.setPosition(500, 500);
-            rectangle.setOrigin(dimensions[0] / 2, dimensions[1] / 2);
-            rectangle.rotate(angle);
-            angle++;
-        }
-
-        return (rectangle);
-    }
-};
-class Triangles
-{
-private:
-    int dimensions[2] = { 50, 50 }; // размер фигуры
-    int angle = 0;
-    int napr = 2;//rand() % 4;
-    int RandPredel = 10;
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= -2) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - 97)//right wall
-            napr = 2;
-        if (posY <= -2)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - 97) // down wall
-            napr = 0;
-    }
-public:
-    int posX = rand() % (Screen[0] - dimensions[0] - 100);
-    int posY = rand() % (Screen[1] - dimensions[1] - 100);
-    CircleShape Triangle() {
-        CircleShape triangle(dimensions[0], 3); // треугольник
-        if (ex1) {
-            move();
-            triangle.setPosition(posX, posY);
-        }
-        else {
-            triangle.setPosition(50, 50);
-            triangle.setOrigin(triangle.getRadius(), triangle.getRadius());
-            triangle.rotate(angle);
-            angle++;
-        }
-        return (triangle);
-    }
-};
-class Ellipses
-{
-private:
-    int dimensions[2] = { 50, 25 }; // размер фигуры
-    int angle = 0;
-    int napr = rand() % 4;
-    int RandPredel = 10;
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - dimensions[0] * 4)//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - dimensions[0] * 2) // down wall
-            napr = 0;
-    }
-public:
-    int posX = rand() % (Screen[0] - 200);
-    int posY = rand() % (Screen[1] - 200);
-    CircleShape Ellipse() {
-        CircleShape ellipse(dimensions[0]); // эллипс
-        ellipse.setScale(2, 1);
-        if (ex1) {
-            move();
-            ellipse.setPosition(posX, posY);
-        }
-        else {
-            ellipse.setPosition(250, 250);
-            ellipse.setOrigin(ellipse.getRadius(), ellipse.getRadius());
-            ellipse.rotate(angle);
-            angle++;
-        }
-        ellipse.setPosition(posX, posY);
-        return (ellipse);
-    }
-};
-class Rhombs: public Paint
-{
-public:
-    Rhombs() {
-        dimensions[0]= 50; // размер фигуры dimensions[0] * 2
-        dimensions[1] = dimensions[0] * 2;
-        angle = 0;
-        napr = rand() % 4;
-        RandPredel = 10;
-        posX = rand() % Screen[0] - dimensions[0];
-        posY = rand() % Screen[0] - dimensions[0];
-    }
-    CircleShape Rhomb() {
-        CircleShape rhomb(dimensions[0], 4); // ромб
-        if (ex1) {
-            move();
-            rhomb.setPosition(posX, posY);
-        }
-        else {
-            rhomb.setPosition(450, 100);
-            rhomb.setOrigin(dimensions[0], dimensions[0]);
-            rhomb.rotate(angle);
-            angle++;
-        }
-        return (rhomb);
-    }
-};
-
-class Paint
-{
-private:
-    
-    class Pixels pix;
-    class Segments seg;
-    class Circles cir;
-    class Rectangles rec[5];
-    class Triangles tri;
-    class Ellipses ell;
-    Rhombs rh;
-    
+class mother {
 protected:
-    const int Screen[2] = { 600,600 };
-    int dimensions[2];
-    int angle;
-    int napr;
-    int RandPredel;
     int posX, posY;
-    
+    int angle;
+    int speed;
+    int hight[2];
+    int mass;
 public:
-    Paint() {
-        posX = 0; posY = 0;
+    mother() {
+        hight[0] = 500;
+        hight[1] = 500;
     }
-    void move() {
-        if (napr == 0) // up
-            posY -= 1;
-        if (napr == 1) // down
-            posY += 1;
-        if (napr == 2) // left
-            posX -= 1;
-        if (napr == 3) // right
-            posX += 1;
-        if (posX <= 0) // left wall
-            napr = 3;
-        if (posX >= Screen[0] - dimensions[0] * 2)//right wall
-            napr = 2;
-        if (posY <= 0)//up wall
-            napr = 1;
-        if (posY >= Screen[1] - dimensions[1] * 2) // down wall
-            napr = 0;
+    void drawp(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(mass, mass));
+        collisionWall();
+        rectangle.setPosition((posX), (posY));
+        window->draw(rectangle);
     }
-    void draw() {
-        RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
-
-        cir.Circle();
-        while (window.isOpen())
-        {
-            sf::Event event;
-            while (window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-            }
-            window.clear();
-            window.draw(pix.Pixel());
-            window.draw(seg.Segment());
-            window.draw(cir.Circle());
-            for (int i = 0; i < 5; i++) {
-                window.draw(rec[i].Rectangle());
-            }
-            window.draw(ell.Ellipse());
-            window.draw(tri.Triangle());
-            window.draw(rh.Rhomb());
-            Sleep(1);
-            window.display();
+    void collisionWall() {
+        if (posX >= hight[0] - mass || posX <= 0) {
+            speed = -speed;
         }
+        posX += speed;
+        posY += speed;
     }
 };
-int main()
-{
-    srand(time(0));
-    class Paint pain;
-    pain.draw();
+class son : public mother {
+public:
+    son() {
+        speed = 1;
+        mass = rand() % 50;
+        posX = 50;
+        posY = 50;
+    }
+};
+void draw() {
+    son box;
+    int Screen[2] = {500,500};
+    RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        window.clear();
+        box.drawp(&window);
+        Sleep(1);
+        window.display();
+    }
+}
+int main() {
+    draw();
 }
