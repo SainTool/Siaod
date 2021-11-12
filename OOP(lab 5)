@@ -1,0 +1,358 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include "windows.h"
+#include <time.h>
+#include <string>
+#include <stdlib.h>  
+using namespace sf;
+
+class mother {
+protected:
+    int posX, posY;
+    int angle = 1;
+    int speedX, speedY;
+    int hight[2];
+    int massX;
+    int massY;
+    int colorR, colorG, colorB;
+    int Screen[2] = { 600,600 };
+    bool youneedrotation = 0;
+public:
+    mother() {
+        hight[0] = 500;
+        hight[1] = 500;
+    }
+    void drawp(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massX));
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        collisionWall();
+        rectangle.setPosition((posX), (posY));
+        window->draw(rectangle);
+    }
+    void rotate(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massX));
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        rectangle.setPosition((posX), (posY));
+        rectangle.setRotation(1);
+    }
+    void collisionWall() {}
+};
+class son : public mother {
+public:
+    son() {
+
+        speedX = pow((-1),rand()%2);
+        speedY = pow((-1), rand() % 2);
+        massX = rand() % 50 + 10;
+        posX = rand() % hight[0];
+        posY = rand() % hight[1];
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massX || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void rotate(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massX));
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        rectangle.setPosition((posX), (posY));
+        rectangle.setRotation(++angle);
+        window->draw(rectangle);
+    }
+};
+
+class Pixels : public mother
+{
+public:
+    Pixels() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 10;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[0] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massX || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape pixel(Vector2f(10, 10)); // пиксель
+        pixel.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (youneedrotation)
+            collisionWall();
+        else {
+            pixel.setOrigin(massX / 2, massY / 2);
+            pixel.rotate(++angle);
+        }
+        pixel.setPosition((posX), (posY));
+        window->draw(pixel);
+        
+    }
+};
+class Segments : public mother
+{
+public:
+    Segments() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 1;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massY || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape segment(Vector2f(massX, massY)); // отрезок
+        segment.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (youneedrotation)
+            collisionWall();
+        else {
+            segment.setOrigin(massX/2, massY/2);
+            segment.rotate(++angle);
+        }
+        segment.setPosition((posX), (posY));
+        window->draw(segment);
+    }
+};
+class Circles : public mother
+{
+public:
+    Circles() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 50;
+        massY = 100;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        // окружность
+        CircleShape circle(massX);
+        circle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (youneedrotation)
+            collisionWall(circle.getRadius() * 2);
+        else {
+            circle.setOrigin(circle.getRadius(), circle.getRadius());
+            circle.rotate(++angle);
+        }
+        circle.setPosition((posX), (posY));
+        window->draw(circle);
+    }
+};
+class Rectangles : public mother
+{
+public:
+    Rectangles() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 50;
+        massY = 25;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massX || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massY)); // прямоугольник
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (youneedrotation)
+            collisionWall();
+        else {
+            rectangle.setOrigin(massX / 2, massY / 2);
+            rectangle.rotate(++angle);
+        }
+        rectangle.setPosition((posX), (posY));
+        window->draw(rectangle);
+
+    }
+};
+class Triangles : public mother
+{
+public:
+    Triangles() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape triangle(massX, 3); // треугольник
+        triangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (youneedrotation)
+            collisionWall(triangle.getRadius() * 2);
+        else {
+            triangle.setOrigin(triangle.getRadius(), triangle.getRadius());
+            triangle.rotate(++angle);
+        }
+        triangle.setPosition((posX), (posY));
+        window->draw(triangle);
+    }
+};
+class Ellipses : public mother
+{
+public:
+    Ellipses() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 200);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius*2 || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape ellipse(massX); // эллипс
+        ellipse.setScale(2, 1);
+        ellipse.setFillColor(Color(colorR, colorG, colorB, 255));
+        if(youneedrotation)
+            collisionWall(ellipse.getRadius() * 2);
+        else {
+            ellipse.setOrigin(ellipse.getRadius(), ellipse.getRadius());
+            ellipse.rotate(++angle);
+        }
+        ellipse.setPosition((posX), (posY));
+        window->draw(ellipse);
+    }
+};
+class Rhombs : public mother
+{
+public:
+    Rhombs() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 200);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape rhomb(massX, 4); // ромб
+        rhomb.setFillColor(Color(colorR, colorG, colorB, 255));
+        rhomb.setPosition((posX), (posY));
+        if(youneedrotation)
+            collisionWall(rhomb.getRadius() * 2);
+        else {
+            rhomb.setOrigin(massX, massY);
+            rhomb.rotate(++angle);
+        }
+        window->draw(rhomb);
+    }
+};
+
+void draw() {
+    class Pixels pix;
+    class Segments seg;
+    class Circles cir;
+    class Rectangles rec;
+    class Triangles tri;
+    class Ellipses ell;
+    class Rhombs rh;
+    son box[20];
+    int Screen[2] = {500,500};
+    RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        window.clear();
+        for (int i = 0; i < 1; i++) {
+            //box[i].rotate(&window);
+            pix.drawp(&window);
+            seg.drawp(&window);
+            cir.drawp(&window);
+            rec.drawp(&window);
+            tri.drawp(&window);
+            ell.drawp(&window);
+            rh.drawp(&window);
+        }
+        Sleep(1);
+        window.display();
+    }
+}
+
+int main()
+{
+    srand(time(NULL));
+    draw();
+}
