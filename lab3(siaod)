@@ -1,0 +1,122 @@
+// Двоичное дерево на С++
+#include <stdlib.h>
+#include <iostream>
+
+using namespace std;
+
+struct btree
+{
+	int value;
+	int index;
+	struct btree* left, * right;
+};
+void Prn_Btree(btree** q, int h) {
+	if (*q == NULL) {
+		return;
+	}
+	Prn_Btree(&(*q)->left, h + 1);
+	cout << "Индекс :" << (*q)->index << ". Значение :" << (*q)->value << ". Уровень - " << h << endl;
+	Prn_Btree(&(*q)->right, h + 1);
+}
+int Check_sum(btree** q) {
+	if (*q == NULL) {
+		return (0);
+	}
+	return ((*q)->value + Check_sum(&(*q)->left) + Check_sum(&(*q)->right));
+}
+int KolvoElement(btree** q, int h) {
+	if (*q == NULL) {
+		return 0;
+	}
+	int hight = 1 + (KolvoElement(&(*q)->left, h + 1)) + KolvoElement(&(*q)->right, h + 1);
+	return (hight);
+}
+int Hight_tree(btree** q, int h) {
+	if (*q == NULL) {
+		return 0;
+	}
+	return (1 + max(Hight_tree(&(*q)->left, h + 1), Hight_tree(&(*q)->right, h + 1)));
+}
+float SrHight_tree(btree** q, int h) {
+	if (*q == NULL) {
+		return 0;
+	}
+	return (h + (SrHight_tree(&(*q)->left, h + 1)) + SrHight_tree(&(*q)->right, h + 1));
+}
+int kolvo_element = 1;
+void ISPD(btree** q, int L, int R, int A[100]) {
+	int m = (L + R) / 2;
+	if (L > R)
+		return;
+	if (*q == NULL)
+	{//Нашли место для добавления
+		*q = new btree;
+		(*q)->left = NULL;
+		(*q)->right = NULL;
+		(*q)->value = A[m];
+		(*q)->index = kolvo_element;
+		kolvo_element++;
+		ISPD(&(*q)->left, L, m - 1, A);
+		ISPD(&(*q)->right, m + 1, R, A);
+		return;
+	}
+}
+void SDP(int val, btree** q)
+{
+	if (*q == NULL)
+	{//Нашли место для добавления
+		*q = new btree;
+		(*q)->left = NULL;
+		(*q)->right = NULL;
+		(*q)->value = val;
+		(*q)->index = kolvo_element;
+		kolvo_element++;
+		return;
+	}
+	if ((*q)->value > val)
+		// Добавляем в левое поддерево
+		SDP(val, &(*q)->left);
+	else
+		// Добавляем в правое поддерево
+		SDP(val, &(*q)->right);
+}
+int main()
+{
+	srand(time(0));
+	int m, t = 0;
+	int massiv[101];
+	btree* root = NULL;
+	btree* root2 = NULL;
+	
+	setlocale(LC_ALL, "rus");
+	for (int i = 1; i <= 100; i++) {
+		//massiv[i] = i;
+		massiv[i] = rand()%101;
+		for (int j = 1; j < i; j++) {
+			if (massiv[i] == massiv[j]) {
+				i--;
+				break;
+			}
+		}
+	}
+	ISPD(&root, 1, 100, massiv);
+	kolvo_element = 1;
+	for (int i = 1; i <= 100; i++) {
+		SDP(massiv[i], &root2);
+		//massiv[i] = rand()%101;
+	}
+	Prn_Btree(&root2, 1);
+	//Prn_Btree(&root, 1);
+	//cout << "Контрольная сумма - " << Check_sum(&root) << endl;
+	//cout << "Число элемнтов - " << KolvoElement(&root, 1) << endl;
+	//cout << "Высота - " << Hight_tree(&root, 1) << endl;
+	//cout << "Ср. высота - " << SrHight_tree(&root, 1) / KolvoElement(&root, 1) << endl;
+	cout << endl << endl;
+	cout << " n= " << 100 << "\t | \t Размер \t | \t Контр сумма \t | \t Высота \t| \t Средняя высота \t | "<< endl;
+	cout << "---------|-----------------------|-----------------------|----------------------|--------------------------------|" << endl;
+	cout << " ИСДП \t | \t" << KolvoElement(&root, 1) << "\t\t | \t " << Check_sum(&root) << "\t\t | \t " << Hight_tree(&root, 1) << "\t\t| \t " << SrHight_tree(&root, 1) / KolvoElement(&root, 1) << "\t\t\t |" << endl;
+
+	cout << " СДП \t | \t" << KolvoElement(&root2, 1) << "\t\t | \t " << Check_sum(&root2) << "\t\t | \t " << Hight_tree(&root2, 1) << "\t\t| \t " << SrHight_tree(&root2, 1) / KolvoElement(&root2, 1) << "\t\t\t |" << endl;
+
+	return 0;
+}
