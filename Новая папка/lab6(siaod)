@@ -1,0 +1,184 @@
+#include <iostream>
+#include <ctime>
+#include <iomanip>
+using namespace std;
+struct Vertex {
+	int index;
+	int value;
+	int Bal;
+	Vertex* left,* right;
+};
+Vertex* Roots;
+Vertex* RootA;
+bool rost;
+void LL(Vertex *&p) {
+	Vertex *q = p->left;
+	p->Bal = 0;
+	q->Bal = 0;
+	p->left = q->right;
+	q->right = p;
+	p = q;
+}
+void RR(Vertex *&p) {
+	Vertex* q = p->right;
+	p->Bal = 0;
+	q->Bal = 0;
+	p->right = q->left;
+	q->left = p;
+	p = q;
+}
+void LR(Vertex*& p) {
+	Vertex* q = p->left;
+	Vertex* r = q->right;
+	if (r->Bal < 0) p->Bal = 1;
+	else p->Bal = 0;
+	if (r->Bal > 0) q->Bal = -1;
+	else q->Bal = 0;
+	r->Bal = 0;
+	q->right = r->left;
+	p->left = r->right;
+	r->left = q;
+	r->right = p;
+	p = r;
+}
+void RL(Vertex*& p) {
+	Vertex* q = p->right;
+	Vertex* r = q->left;
+	if (r->Bal > 0) p->Bal = -1;
+	else p->Bal = 0;
+	if (r->Bal < 0) q->Bal = 1;
+	else q->Bal = 0;
+	r->Bal = 0;
+	q->left = r->right;
+	p->right = r->left;
+	r->left = p;
+	r->right = q;
+	p = r;
+}
+void AVL(int D, Vertex*& p, int n) {
+
+	if (p == NULL) {
+		p = new Vertex;
+		p->value = D;
+		p->index = n;
+		p->left = NULL;
+		p->right = NULL;
+		p->Bal = 0;
+		rost = true;
+	}
+	else if (p->value > D) {
+		AVL(D, p->left, n);
+		if (rost == true) {
+			if (p->Bal > 0) {
+				p->Bal = 0;
+				rost = false;
+			}
+			else if (p->Bal == 0) {
+				p->Bal = -1;
+				rost = true;
+			}
+			else {
+				if (p->left->Bal < 0) {
+					LL(p);
+					rost = false;
+				}
+				else {
+					LR(p);
+					rost = false;
+				}
+			}
+		}
+	}
+	else if (p->value < D) {
+		AVL(D, p->right, n);
+		if (rost == true) {
+			if (p->Bal < 0) {
+				p->Bal = 0;
+				rost = false;
+			}
+			else if (p->Bal == 0) {
+				p->Bal = 1;
+				rost = true;
+			}
+			else {
+				if (p->right->Bal > 0) {
+					RR(p);
+					rost = false;
+				}
+				else {
+					RL(p);
+					rost = false;
+				}
+			}
+		}
+	}
+	else cout << "Vertex already in tree!";
+}		
+int SDP(int D, Vertex*& root, int n) {
+	if (root == NULL) {
+		root = new Vertex;
+		root->index = n;
+		root->value = D;
+		root->left = NULL;
+		root->right = NULL;
+	}
+	else if (root->value < D) {
+		SDP(D, root->right, n);
+	}
+	else if (root->value > D) {
+		SDP(D, root->left, n);
+	}
+	else return 1;
+	return 0;
+}
+void printSDP(Vertex*& q) {
+	if (q != NULL) {
+		printSDP(q->left);
+		std::cout << q->index << " ";
+		printSDP(q->right);
+	}
+}
+int Check_sum(Vertex*& q) {
+	if (q == NULL) {
+		return (0);
+	}
+	return ((q)->value + Check_sum((q)->left) + Check_sum((q)->right));
+}
+int Hight_tree(Vertex*& q, int h) {
+	if (q == NULL) {
+		return 0;
+	}
+	return (1 + max(Hight_tree((q)->left, h + 1), Hight_tree((q)->right, h + 1)));
+}
+int KolvoElement(Vertex*& q, int h) {
+	if (q == NULL) {
+		return 0;
+	}
+	int hight = 1 + (KolvoElement((q)->left, h + 1)) + KolvoElement((q)->right, h + 1);
+	return (hight);
+}
+int main() {
+	srand(time(0));
+	int m, t = 0, Key;
+	const int huge = 101;
+	int massiv[huge];
+	for (int i = 0; i < huge - 1; i++) {
+		massiv[i] = rand() % 100;
+		for (int j = 0; j < i; j++) {
+			if (massiv[i] == massiv[j]) {
+				i--;
+				break;;
+			}
+		}
+	}
+	Roots = NULL;
+	for (int i = 0; i < huge - 1; i++) {
+		SDP(massiv[i], Roots, i);
+	}
+	printSDP(Roots);
+	RootA = NULL;
+	for (int i = 0; i < huge - 1; i++) {
+		AVL(massiv[i], Roots, i);
+	}
+	printSDP(RootA);
+}
