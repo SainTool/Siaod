@@ -1,0 +1,100 @@
+// Двоичное дерево на С++
+#include <stdlib.h>
+#include <iostream>
+
+using namespace std;
+
+struct Vertex
+{
+	int value;
+	int index;
+	struct Vertex* left, * right;
+};
+Vertex* root;
+void SDP(int val, Vertex *&q,int number)
+{
+	if (q == NULL)
+	{//Нашли место для добавления
+		q = new Vertex;
+		(q)->left = NULL;
+		(q)->right = NULL;
+		(q)->value = val;
+		(q)->index = number;
+		return;
+	}
+	if ((q)->value > val)
+		// Добавляем в левое поддерево
+		SDP(val, q->left, number);
+	else
+		// Добавляем в правое поддерево
+		SDP(val, q->right, number);
+}
+void deleteSDP(int key, Vertex*& root) {
+	Vertex** p = &root;
+
+	while (p != NULL) {
+		if ((*p)->value < key) p = &((*p)->right);
+		else
+			if ((*p)->value > key) p = &((*p)->left);
+			else
+				break;
+	}
+	if (p != NULL) {
+		Vertex* q = *p;
+		if (q->left == NULL) *p = q->right;
+		else if (q->right == NULL) *p = q->left;
+		else {
+			Vertex* r;
+			Vertex* s;
+			r = q->left;
+			s = q;
+			while (r->right) {
+				s = r;
+				r = r->right;
+			}
+			s->right = r->left;
+			r->left = q->left;
+			r->right = q->right;
+			*p = r;
+		}
+		delete q;
+	}
+}
+void printSDP(Vertex* &q) {
+	if (q != NULL) {
+		printSDP(q->left);
+		if(q->index == 0)
+			std::cout <<"C:" << q->value << "  ";
+		else
+			std::cout << q->value <<  " " ;
+		printSDP(q->right);
+	}
+}
+
+int main()
+{
+	srand(time(0));
+	int m, t = 0, Key;
+	const int huge = 21;
+	int massiv[huge];
+	for (int i = 0; i < huge - 1; i++) {
+		massiv[i] = rand() % 100;
+		for (int j = 0; j < i; j++) {
+			if (massiv[i] == massiv[j]) {
+				i--;
+				break;;
+			}
+		}
+}
+	for ( int i = 0; i < huge - 1; i++){
+		SDP(massiv[i], root, i);
+	}
+	printSDP(root);
+	for (int i = 0; i < 10; i++) {
+		std::cout <<std::endl<< "Input delete Key: ";
+		std::cin >> Key;
+		deleteSDP(Key, root);
+		printSDP(root);
+	}
+	return 0;
+}
