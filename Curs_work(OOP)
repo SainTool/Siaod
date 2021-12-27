@@ -8,24 +8,21 @@ using namespace sf;
 
 class mother {
 protected:
-    int posX, posY;
+    int posX, posY,
+        speedX, speedY,
+        hight[2],
+        massX, massY,
+        colorR, colorG, colorB;
     float angle = 0;
-    int speedX, speedY;
-    int hight[2];
-    int massX;
-    int massY;
-    int colorR, colorG, colorB;
-    int Screen[2] = { 600,600 };
-    bool youneedrotation;
+    const int Screen[2];
 public:
-    mother() :youneedrotation(1) {
-        hight[0] = 500;
-        hight[1] = 500;
+    mother() : hight{ 500,500 }, Screen{ 600,600 } {}
+    mother(int x, int y) : posX(x), posY(y), massX(10), Screen{ 600,600 }{
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
     virtual void drawp(RenderWindow* window) {
         RectangleShape rectangle(Vector2f(massX, massX));
         rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
-        collisionWall();
         rectangle.setPosition((posX), (posY));
         window->draw(rectangle);
     }
@@ -33,9 +30,8 @@ public:
         RectangleShape rectangle(Vector2f(massX, massX));
         rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
         rectangle.setPosition((posX), (posY));
-        rectangle.setRotation(1);
+        rectangle.setRotation(angle++);
     }
-    void collisionWall() {}
 };
 class Pixels : public mother
 {
@@ -55,28 +51,14 @@ public:
         posY = y;
         colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
-    virtual void collisionWall() {
-        if (posX >= hight[0] - massX || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - massX || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         RectangleShape pixel(Vector2f(massX, massY)); // пиксель
         pixel.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall();
-        else {
-            pixel.setOrigin(massX/2, massX/2);
-            pixel.rotate(++angle * 0.001);
-            pixel.setOrigin(250 - posX, 250 - posY);
-            pixel.rotate(angle);
-        }
-        pixel.setPosition((Screen[0]/2), (Screen[1] / 2));
+        pixel.setOrigin(massX / 2, massX / 2);
+        pixel.rotate(++angle * 0.001);
+        pixel.setOrigin(250 - posX, 250 - posY);
+        pixel.rotate(angle);
+        pixel.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(pixel);
 
     }
@@ -100,27 +82,13 @@ public:
         posY = y;
         colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
-    virtual void collisionWall() {
-        if (posX >= hight[0] - massX || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - massY || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         RectangleShape segment(Vector2f(massX, massY)); // отрезок
         segment.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall();
-        else {
-            segment.setOrigin(massX / 2, massY / 2);
-            segment.rotate(++angle * 0.001);
-            segment.setOrigin(250 - posX, 250 - posY);
-            segment.rotate(angle);
-        }
+        segment.setOrigin(massX / 2, massY / 2);
+        segment.rotate(++angle * 0.001);
+        segment.setOrigin(250 - posX, 250 - posY);
+        segment.rotate(angle);
         segment.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(segment);
     }
@@ -151,28 +119,14 @@ public:
         posY = y;
         colorR = R; colorG = G; colorB = B;
     }
-    virtual void collisionWall(int radius) {
-        if (posX >= hight[0] - radius || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - radius || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         // окружность
         CircleShape circle(massX);
         circle.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall(circle.getRadius() * 2);
-        else {
-            circle.setOrigin(circle.getRadius(), circle.getRadius());
-            circle.rotate(++angle * 0.001);
-            circle.setOrigin(250 - posX, 250 - posY);
-            circle.rotate(angle);
-        }
+        circle.setOrigin(circle.getRadius(), circle.getRadius());
+        circle.rotate(++angle * 0.001);
+        circle.setOrigin(250 - posX, 250 - posY);
+        circle.rotate(angle);
         circle.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(circle);
     }
@@ -203,30 +157,15 @@ public:
         posY = y;
         colorR = R; colorG = G; colorB = B;
     }
-    virtual void collisionWall() {
-        if (posX >= hight[0] - massX || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - massX || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         RectangleShape rectangle(Vector2f(massX, massY)); // прямоугольник
         rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall();
-        else {
-            rectangle.setOrigin(massX / 2, massY / 2);
-            rectangle.rotate(++angle * 0.001);
-            rectangle.setOrigin(250 - posX, 250 - posY);
-            rectangle.rotate(angle);
-        }
+        rectangle.setOrigin(massX / 2, massY / 2);
+        rectangle.rotate(++angle * 0.001);
+        rectangle.setOrigin(250 - posX, 250 - posY);
+        rectangle.rotate(angle);
         rectangle.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(rectangle);
-
     }
 };
 class Triangls : public Rectangles
@@ -248,34 +187,20 @@ public:
         posY = y;
         colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
-    Triangls(int x, int y, int c, int R,int G, int B) {
+    Triangls(int x, int y, int c, int R, int G, int B) {
         massX = c;
         massY = c;
         posX = x;
         posY = y;
         colorR = R; colorG = G; colorB = B;
     }
-    virtual void collisionWall(int radius) {
-        if (posX >= hight[0] - radius || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - radius || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         CircleShape triangle(massX, 3); // треугольник
         triangle.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall(triangle.getRadius() * 2);
-        else {
-            triangle.setOrigin(triangle.getRadius(), triangle.getRadius());
-            triangle.rotate(++angle * 0.001);
-            triangle.setOrigin(250 - posX, 250 - posY);
-            triangle.rotate(angle);
-        }
+        triangle.setOrigin(triangle.getRadius(), triangle.getRadius());
+        triangle.rotate(++angle * 0.001);
+        triangle.setOrigin(250 - posX, 250 - posY);
+        triangle.rotate(angle);
         triangle.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(triangle);
     }
@@ -299,28 +224,14 @@ public:
         posY = y;
         colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
-    virtual void collisionWall(int radius) {
-        if (posX >= hight[0] - radius * 2 || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - radius || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         CircleShape ellipse(massX); // эллипс
         ellipse.setScale(2, 1);
         ellipse.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall(ellipse.getRadius() * 2);
-        else {
-            ellipse.setOrigin(ellipse.getRadius(), ellipse.getRadius());
-            ellipse.rotate(++angle * 0.001);
-            ellipse.setOrigin(250 - posX, 250 - posY);
-            ellipse.rotate(angle);
-        }
+        ellipse.setOrigin(ellipse.getRadius(), ellipse.getRadius());
+        ellipse.rotate(++angle * 0.001);
+        ellipse.setOrigin(250 - posX, 250 - posY);
+        ellipse.rotate(angle);
         ellipse.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(ellipse);
     }
@@ -344,27 +255,13 @@ public:
         posY = y;
         colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
     }
-    virtual void collisionWall(int radius) {
-        if (posX >= hight[0] - radius || posX <= 0) {
-            speedX = -speedX;
-        }
-        if (posY >= hight[1] - radius || posY <= 0) {
-            speedY = -speedY;
-        }
-        posX += speedX;
-        posY += speedY;
-    }
     virtual void drawp(RenderWindow* window) {
         CircleShape rhomb(massX, 4); // ромб
         rhomb.setFillColor(Color(colorR, colorG, colorB, 255));
-        if (!youneedrotation)
-            collisionWall(rhomb.getRadius() * 2);
-        else {
-            rhomb.setOrigin(massX/2, massY/2);
-            rhomb.rotate(++angle * 0.001);
-            rhomb.setOrigin(250 - posX, 250 - posY);
-            rhomb.rotate(angle);
-        }
+        rhomb.setOrigin(massX / 2, massY / 2);
+        rhomb.rotate(++angle * 0.001);
+        rhomb.setOrigin(250 - posX, 250 - posY);
+        rhomb.rotate(angle);
         rhomb.setPosition((Screen[0] / 2), (Screen[1] / 2));
         window->draw(rhomb);
     }
@@ -372,9 +269,9 @@ public:
 
 void draw() {
     class mother** mot;
-    int vvod, new_len, 
-        Screen[2] = { 600,600 }, 
-        lenght = 0, 
+    int vvod, new_len,
+        Screen[2] = { 600,600 },
+        lenght = 0,
         largeM = 8;
     bool check_figure = true;
     std::cout << " 1) Пиксель;\n 2) Отрезок;\n 3) Окружность;\n 4) Прямоугольник;\n 5) Треугольник;\n 6) Элипс;\n 7) Ромб;\n 8) Домик;\n 9) ---;\n 0) ---;\n";
@@ -411,7 +308,7 @@ void draw() {
             }
             std::cout << "Введите размер фигуры - ";
             std::cin >> c;
-            mot[i] = new Pixels(x,y,c);
+            mot[i] = new Pixels(x, y, c);
             break;
         case 2:
             while (true) {
@@ -538,9 +435,9 @@ void draw() {
             break;
         case 8:
             new_len = 14;
-            mot = new mother *[new_len];
+            mot = new mother * [new_len];
             mot[0] = new Rectangles(100, 100, 50, 50, 122, 83, 47);//обшивка
-            mot[1]= new Rectangles(100, 100, 50, 10, 92, 54, 19);//стены
+            mot[1] = new Rectangles(100, 100, 50, 10, 92, 54, 19);//стены
             mot[2] = new Rectangles(150, 100, 10, 50, 92, 54, 19);
             mot[3] = new Rectangles(100, 150, 60, 10, 92, 54, 19);
             mot[4] = new Rectangles(100, 100, 10, 50, 92, 54, 19);
@@ -552,7 +449,7 @@ void draw() {
             mot[10] = new Circles(102, 38, 6, 120, 120, 120);
             mot[11] = new Circles(106, 52, 3, 120, 120, 120);
             mot[12] = new Rectangles(107, 55, 5, 45, 61, 61, 61);//труба
-            mot[13] = new Triangls(85,35,45, 201, 46, 46);//крыша
+            mot[13] = new Triangls(85, 35, 45, 201, 46, 46);//крыша
             lenght = i = new_len;
             break;
         default:
@@ -584,7 +481,7 @@ void draw() {
         window.display();
         if (check_figure)//просмотр получившейся фигуры
             while (true)
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                     check_figure = false;
                     break;
                 }
