@@ -1,0 +1,603 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include "windows.h"
+#include <time.h>
+#include <string>
+#include <stdlib.h>  
+using namespace sf;
+
+class mother {
+protected:
+    int posX, posY;
+    float angle = 0;
+    int speedX, speedY;
+    int hight[2];
+    int massX;
+    int massY;
+    int colorR, colorG, colorB;
+    int Screen[2] = { 600,600 };
+    bool youneedrotation;
+public:
+    mother() :youneedrotation(1) {
+        hight[0] = 500;
+        hight[1] = 500;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massX));
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        collisionWall();
+        rectangle.setPosition((posX), (posY));
+        window->draw(rectangle);
+    }
+    void rotate(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massX));
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        rectangle.setPosition((posX), (posY));
+        rectangle.setRotation(1);
+    }
+    void collisionWall() {}
+};
+class Pixels : public mother
+{
+public:
+    Pixels() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 10;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[0] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Pixels(int x, int y, int c) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massX || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape pixel(Vector2f(massX, massY)); // пиксель
+        pixel.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall();
+        else {
+            pixel.setOrigin(massX/2, massX/2);
+            pixel.rotate(++angle * 0.001);
+            pixel.setOrigin(250 - posX, 250 - posY);
+            pixel.rotate(angle);
+        }
+        pixel.setPosition((Screen[0]/2), (Screen[1] / 2));
+        window->draw(pixel);
+
+    }
+};
+class Segments : public Pixels
+{
+public:
+    Segments() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 1;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Segments(int x, int y, int c) {
+        massX = c;
+        massY = 1;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massY || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape segment(Vector2f(massX, massY)); // отрезок
+        segment.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall();
+        else {
+            segment.setOrigin(massX / 2, massY / 2);
+            segment.rotate(++angle * 0.001);
+            segment.setOrigin(250 - posX, 250 - posY);
+            segment.rotate(angle);
+        }
+        segment.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(segment);
+    }
+};
+class Circles : public Segments
+{
+public:
+    Circles() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 50;
+        massY = 100;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Circles(int x, int y, int c) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Circles(int x, int y, int c, int R, int G, int B) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = R; colorG = G; colorB = B;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        // окружность
+        CircleShape circle(massX);
+        circle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall(circle.getRadius() * 2);
+        else {
+            circle.setOrigin(circle.getRadius(), circle.getRadius());
+            circle.rotate(++angle * 0.001);
+            circle.setOrigin(250 - posX, 250 - posY);
+            circle.rotate(angle);
+        }
+        circle.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(circle);
+    }
+};
+class Rectangles : public Circles
+{
+public:
+    Rectangles() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 50;
+        massY = 25;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Rectangles(int x, int y, int c, int d) {
+        massX = c;
+        massY = d;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Rectangles(int x, int y, int c, int d, int R, int G, int B) {
+        massX = c;
+        massY = d;
+        posX = x;
+        posY = y;
+        colorR = R; colorG = G; colorB = B;
+    }
+    virtual void collisionWall() {
+        if (posX >= hight[0] - massX || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - massX || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        RectangleShape rectangle(Vector2f(massX, massY)); // прямоугольник
+        rectangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall();
+        else {
+            rectangle.setOrigin(massX / 2, massY / 2);
+            rectangle.rotate(++angle * 0.001);
+            rectangle.setOrigin(250 - posX, 250 - posY);
+            rectangle.rotate(angle);
+        }
+        rectangle.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(rectangle);
+
+    }
+};
+class Triangls : public Rectangles
+{
+public:
+    Triangls() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 100);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Triangls(int x, int y, int c) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Triangls(int x, int y, int c, int R,int G, int B) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = R; colorG = G; colorB = B;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape triangle(massX, 3); // треугольник
+        triangle.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall(triangle.getRadius() * 2);
+        else {
+            triangle.setOrigin(triangle.getRadius(), triangle.getRadius());
+            triangle.rotate(++angle * 0.001);
+            triangle.setOrigin(250 - posX, 250 - posY);
+            triangle.rotate(angle);
+        }
+        triangle.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(triangle);
+    }
+};
+class Ellipses : public Triangls
+{
+public:
+    Ellipses() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 200);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Ellipses(int x, int y, int c) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius * 2 || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape ellipse(massX); // эллипс
+        ellipse.setScale(2, 1);
+        ellipse.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall(ellipse.getRadius() * 2);
+        else {
+            ellipse.setOrigin(ellipse.getRadius(), ellipse.getRadius());
+            ellipse.rotate(++angle * 0.001);
+            ellipse.setOrigin(250 - posX, 250 - posY);
+            ellipse.rotate(angle);
+        }
+        ellipse.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(ellipse);
+    }
+};
+class Rhombs : public Ellipses
+{
+public:
+    Rhombs() {
+        speedX = pow((-1), rand() % 2);
+        speedY = pow((-1), rand() % 2);
+        massX = 25;
+        massY = 25;
+        posX = rand() % (hight[0] - 200);
+        posY = rand() % (hight[1] - 100);
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    Rhombs(int x, int y, int c) {
+        massX = c;
+        massY = c;
+        posX = x;
+        posY = y;
+        colorR = rand() % 256; colorG = rand() % 256; colorB = rand() % 256;
+    }
+    virtual void collisionWall(int radius) {
+        if (posX >= hight[0] - radius || posX <= 0) {
+            speedX = -speedX;
+        }
+        if (posY >= hight[1] - radius || posY <= 0) {
+            speedY = -speedY;
+        }
+        posX += speedX;
+        posY += speedY;
+    }
+    virtual void drawp(RenderWindow* window) {
+        CircleShape rhomb(massX, 4); // ромб
+        rhomb.setFillColor(Color(colorR, colorG, colorB, 255));
+        if (!youneedrotation)
+            collisionWall(rhomb.getRadius() * 2);
+        else {
+            rhomb.setOrigin(massX/2, massY/2);
+            rhomb.rotate(++angle * 0.001);
+            rhomb.setOrigin(250 - posX, 250 - posY);
+            rhomb.rotate(angle);
+        }
+        rhomb.setPosition((Screen[0] / 2), (Screen[1] / 2));
+        window->draw(rhomb);
+    }
+};
+
+void draw() {
+    class mother** mot;
+    int vvod, new_len, 
+        Screen[2] = { 600,600 }, 
+        lenght = 0, 
+        largeM = 8;
+    bool check_figure = true;
+    std::cout << " 1) Пиксель;\n 2) Отрезок;\n 3) Окружность;\n 4) Прямоугольник;\n 5) Треугольник;\n 6) Элипс;\n 7) Ромб;\n 8) Домик;\n 9) ---;\n 0) ---;\n";
+    std::cout << "Введите номера фигур из которых хотите создать фигуру - ";
+    std::cin >> vvod;
+    vvod = abs(vvod);
+    int buf = vvod;
+    for (; vvod > 0; lenght++)  vvod = vvod / 10;
+    vvod = buf;
+    mot = new mother * [lenght];
+    for (int i = 0; i < lenght; i++) {
+        int num = vvod % 10,
+            x = 0,
+            y = 0,
+            c = 0;
+        vvod = vvod / 10;
+        switch (num)
+        {
+        case 1:
+            while (true) {
+                std::cout << "Пиксель. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Pixels(x,y,c);
+            break;
+        case 2:
+            while (true) {
+                std::cout << "Отрезок. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Segments(x, y, c);
+            break;
+        case 3:
+            while (true) {
+                std::cout << "Окружность. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Circles(x, y, c);
+            break;
+        case 4:
+            while (true) {
+                std::cout << "Прямоугольник. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите ширину фигуры - ";
+            std::cin >> c;
+            int d;
+            std::cout << "Введите длину фигуры - ";
+            std::cin >> d;
+            mot[i] = new Rectangles(x, y, c, d);
+            break;
+        case 5:
+            while (true) {
+                std::cout << "Треугольник. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Triangls(x, y, c);
+            break;
+        case 6:
+            while (true) {
+                std::cout << "Элипс. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Ellipses(x, y, c);
+            break;
+        case 7:
+            while (true) {
+                std::cout << "Ромб. Введите позицию x - ";
+                std::cin >> x;
+                std::cout << "y - ";
+                std::cin >> y;
+                try
+                {
+                    if (!(x >= 0 && x <= Screen[0] / 2 || y >= 0 && y <= Screen[1] / 2)) throw "Неверные входные данные";
+                    break;
+                }
+                catch (const char* exception)
+                {
+                    std::cerr << "Ошибка: " << exception << '\n';
+                }
+            }
+            std::cout << "Введите размер фигуры - ";
+            std::cin >> c;
+            mot[i] = new Rhombs(x, y, c);
+            break;
+        case 8:
+            new_len = 14;
+            mot = new mother *[new_len];
+            mot[0] = new Rectangles(100, 100, 50, 50, 122, 83, 47);//обшивка
+            mot[1]= new Rectangles(100, 100, 50, 10, 92, 54, 19);//стены
+            mot[2] = new Rectangles(150, 100, 10, 50, 92, 54, 19);
+            mot[3] = new Rectangles(100, 150, 60, 10, 92, 54, 19);
+            mot[4] = new Rectangles(100, 100, 10, 50, 92, 54, 19);
+            mot[5] = new Rectangles(125, 125, 10, 5, 204, 133, 67);//окно
+            mot[6] = new Rectangles(135, 125, 5, 10, 204, 133, 67);
+            mot[7] = new Rectangles(125, 125, 5, 10, 204, 133, 67);
+            mot[8] = new Rectangles(125, 135, 15, 5, 204, 133, 67);
+            mot[9] = new Circles(84, 22, 10, 120, 120, 120);//дым
+            mot[10] = new Circles(102, 38, 6, 120, 120, 120);
+            mot[11] = new Circles(106, 52, 3, 120, 120, 120);
+            mot[12] = new Rectangles(107, 55, 5, 45, 61, 61, 61);//труба
+            mot[13] = new Triangls(85,35,45, 201, 46, 46);//крыша
+            lenght = i = new_len;
+            break;
+        default:
+            std::cout << "Ошибка: Неверный номер фигуры" << std::endl;
+            i--;
+            lenght--;
+            break;
+        }
+    }
+    RenderWindow window(VideoMode(Screen[0], Screen[1]), "SFML works!");
+    if (lenght == 0) {
+        std::cout << "Нечего рисовать" << std::endl;
+        window.close();
+    }
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        window.clear();
+        for (int i = 0; i < lenght; i++) {
+            //box[i].rotate(&window);
+            mot[i]->drawp(&window);
+        }
+        Sleep(1);
+        window.display();
+        if (check_figure)//просмотр получившейся фигуры
+            while (true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+                    check_figure = false;
+                    break;
+                }
+    }
+    for (int i = 0; i < lenght; i++) {
+        delete mot[i];
+    }
+}
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+    srand(time(NULL));
+    draw();
+    return 0;
+}
