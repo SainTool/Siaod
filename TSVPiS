@@ -1,0 +1,152 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+#include <cmath>
+
+#define ll int64_t
+using namespace std;
+
+
+void merge(int arr[], int sizeForArr, int L[], int sizeForL, int R[], int sizeForR)
+{
+    int i = 0;
+    int j = 0;
+    while (i < sizeForL || j < sizeForR)
+    {
+        if (i < sizeForL && j < sizeForR)
+        {
+            if (L[i] <= R[j])
+            {
+                arr[i + j] = L[i];
+                ++i;
+            }
+            else
+            {
+                arr[i + j] = R[j];
+                ++j;
+            }
+        }
+        else if (i < sizeForL)
+        {
+            arr[i + j] = L[i];
+            ++i;
+        }
+        else if (j < sizeForR)
+        {
+            arr[i + j] = R[j];
+            ++j;
+        }
+    }
+}
+
+void merge_sort(int arr[], int size)
+{
+    if (size > 1)
+    {
+        int middle = size / 2;
+        int rem = size - middle;
+        int* L = new int[middle];
+        int* R = new int[rem];
+        for (int i = 0; i < size; ++i)
+        {
+            if (i < middle)
+            {
+                L[i] = arr[i];
+            }
+            else
+            {
+                R[i - middle] = arr[i];
+            }
+        }
+        merge_sort(L, middle);
+        merge_sort(R, rem);
+        merge(arr, size, L, middle, R, rem);
+    }
+}
+
+int svertka(int* a, int* b, int* c, int size_a, int size_b, int size_c)
+{
+    for (int k = 0; k < size_c; k++)
+    {
+        cout << "C[" << k << "]=";
+        if (k < size_b)
+        {
+            for (int i = 0; i <= k && i < size_a; i++)
+            {
+                c[k] += a[i] * b[k - i];
+                cout << "+A[" << i << "]*B[" << k - i << "]";
+            }
+
+        }
+        else
+        {
+            for (int i = k - size_b + 1; i < size_a; i++) {
+                c[k] += a[i] * b[k - i];
+                cout << "+A[" << i << "]*B[" << k - i << "]";
+            }
+        }
+        cout << "=" << c[k];
+        cout << endl;
+    }
+    return c[size_c - 1];
+    /*for (int i = 0; i < size_c; i++) {
+        printf("C[%d]=", i);
+        if (i < size_b) {
+            for(int )
+        }
+    }*/
+}
+void printm(int* mas, int num)
+{
+    for (int i = 0; i < num; i++) {
+        cout << mas[i] << " ";
+    }
+    cout << endl;
+}
+
+
+
+int main()
+{
+    int size_A = 2, size_B = 3;
+
+    //cout << "Size string A = "; cin >> A;
+    //cout << "Size string B = "; cin >> B;
+
+    int size_C = size_A + size_B - 1;
+    int* a = new int [size_A] {};
+    int* b = new int [size_B] {};
+    int* c = new int [size_C] {};
+
+    /*for (int i = 0; i < A; i++) {
+        a[i] = rand() % 9 + 1;
+    }
+    for (int i = 0; i < B; i++) {
+        b[i] = rand() % 9 + 1;
+    }*/
+
+    /*a[0] = 9; a[1] = 7; a[2] = 8; a[3] = 3; a[4] = 2;
+    b[0] = 6; b[1] = 6; b[2] = 3;*/
+
+    a[0] = 9; a[1] = 7; b[0] = 6; b[1] = 6; b[2] = 3;
+
+
+    printm(a, size_A);
+    printm(b, size_B);
+
+    int first_element;
+    if (size_A > size_B)
+    {
+        first_element = svertka(b, a, c, size_B, size_A, size_C);
+    }
+    else
+    {
+        first_element = svertka(a, b, c, size_A, size_B, size_C);
+    }
+    printm(c, size_C);
+    return 0;
+    
+    return 0;
+}
