@@ -1,0 +1,97 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int oper = 0;
+const double PI = 3.14159265;
+
+void printa(double*, int);
+void printm(double**, double**, int);
+
+void fourier(double*, double**, int);
+void inverseFourier(double**, double**, int);
+
+int main()
+{
+    srand(time(NULL));
+
+    int SIZE;
+    cout << "INPUT SIZE: "; cin >> SIZE;
+
+    double* a = new double[SIZE];
+    double** A = new double* [2];
+    double** FA = new double* [2];
+
+    for (int i = 0; i < SIZE; i++) {
+        a[i] = rand() % 100;
+    }
+    a[0] = 87; a[1]=46; a[2]=30; a[3]=86; a[4]=7;
+    for (int i = 0; i < 2; i++) {
+        A[i] = new double[SIZE] {};
+        FA[i] = new double[SIZE] {};
+    }
+
+    printa(a, SIZE);
+    fourier(a, A, SIZE);
+    inverseFourier(A, FA, SIZE);
+
+    printm(A, FA, SIZE);
+    cout << oper << endl;
+
+    system("pause");
+}
+
+void fourier(double* y, double** A, int SIZE)
+{
+    std::cout << "\n";
+    for (int k = 0; k < SIZE; k++) {
+        for (int j = 0; j < SIZE; j++) {
+            oper++;
+            double a = -2.0 * PI * k * j / SIZE;
+            A[0][k] += y[j] * cos(a);
+            A[1][k] -= y[j] * sin(a);
+        }
+        A[0][k] /= SIZE;
+        A[1][k] /= SIZE;
+    }
+}
+
+void inverseFourier(double** A, double** F, int SIZE)
+{
+    for (int k = 0; k < SIZE; k++) {
+        std::cout << k << "\n";
+        for (int j = 0; j < SIZE; j++) {
+            double a = 2.0 * PI * k * j / SIZE;
+            F[0][k] += A[0][j] * cos(a)-A[1][j] * sin(a);
+            F[1][k] += A[1][j] * cos(a)+A[0][j] * sin(a);
+            std::cout << F[0][k] << " " << F[1][k] << "\n";
+        }
+        
+    }
+}
+
+void printa(double* a, int SIZE)
+{
+    cout << endl << "Basic massive: ";
+    for (int i = 0; i < SIZE; i++) {
+        cout << a[i] << setw(5);
+    }
+}
+
+void printm(double** A, double** FA, int SIZE)
+{
+    cout << "\nfourier: A\t\t\t" << "inverseFourier: A" << endl;
+    for (int i = 0; i < SIZE; ++i) {
+        cout << "( " << fixed << setprecision(4);
+        cout << A[0][i] << setw(5) << " , i" << fixed;
+        cout << setprecision(10) << A[1][i] << " )";
+        cout << "\t\t\t" << "( " << fixed << setprecision(1);
+        cout << FA[0][i] << setw(5) << " , i" << fixed;
+        cout << setprecision(10) << FA[1][i] << " )" << endl;
+    }
+}
