@@ -1,11 +1,18 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <fstream>
+#include <cstdio>
+#include <cstdlib>
 #include <cmath>
+#include <ctime>
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int oper = 0;
+const double PI = 3.14159265;
 int srav = 0;
 int perep = 0;
+
+
 void printMassiv(int* mas, int num)
 {
 	for (int i = 0; i < num; i++) {
@@ -13,7 +20,13 @@ void printMassiv(int* mas, int num)
 	}
 	std::cout << std::endl;
 }
-void bubleSort(int * mass_first,int len) {
+void printMassivDouble(double* mas, int num) {
+	for (int i = 0; i < num; i++) {
+		std::cout << mas[i] << " ";
+	}
+	std::cout << std::endl;
+}
+void bubleSort(int* mass_first, int len) {
 	int* mass = new int[len];
 	for (int i = 0; i < len; i++) {
 		mass[i] = mass_first[i];
@@ -22,7 +35,7 @@ void bubleSort(int * mass_first,int len) {
 	for (int j = 0; j < len; j++) {
 		for (int i = 1; i < len - j; i++) {
 			if (mass[i] > mass[i - 1]) {
-				std::swap(mass[i],mass[i-1]);
+				std::swap(mass[i], mass[i - 1]);
 				pr += 3;
 			}
 			sr++;
@@ -42,17 +55,17 @@ void bubleSort(int * mass_first,int len) {
 	}
 	std::cout << "\nСравнений : " << sr << std::endl << "Присваиваний : " << pr << std::endl;
 }
-void selectSort(int* mass_first,int len) {
+void selectSort(int* mass_first, int len) {
 	int* mass = new int[len];
 	for (int i = 0; i < len; i++) {
 		mass[i] = mass_first[i];
 	}
 	int sr = 0, pr = 0;
-	int min = mass[0],pos = 0;
-	for (int j = 0; j < len-1; j++) {
+	int min = mass[0], pos = 0;
+	for (int j = 0; j < len - 1; j++) {
 		min = mass[j];
 		pos = j;
-		for (int i = pos+1; i < len; i++) {
+		for (int i = pos + 1; i < len; i++) {
 			if (mass[i] < mass[pos]) {
 				pos = i;
 			}
@@ -73,7 +86,7 @@ void selectSort(int* mass_first,int len) {
 	}
 	std::cout << "\nОтсортированный: \n";
 	for (int i = 0; i < len; i++) {
-		std::cout << mass[i] <<" ";
+		std::cout << mass[i] << " ";
 	}
 	std::cout << "\nСравнений : " << sr << std::endl << "Присваиваний : " << pr << "\n\n";
 }
@@ -85,9 +98,9 @@ void mergeSortOld(int* mass_first, int len) {
 	int* buff = new int[len];
 	int step = 1;
 	int sr = 0, pr = 0;
-	
+
 	std::cout << "\n\nMergeSort: \nМассив: \n";
-	printMassiv(mass_first,len);
+	printMassiv(mass_first, len);
 	std::cout << "\nСортировка: \n";
 	while (step < len) {
 		int index = 0;
@@ -98,10 +111,10 @@ void mergeSortOld(int* mass_first, int len) {
 			m = m < len ? m : len;
 			r = r < len ? r : len;
 			int i1 = l, i2 = m;
-			while(i1 < m && i2 < r) {
-				if (mass[i1] < mass[i2]) 
+			while (i1 < m && i2 < r) {
+				if (mass[i1] < mass[i2])
 					buff[index++] = mass[i1++];
-				else 
+				else
 					buff[index++] = mass[i2++];
 				sr++;
 			}
@@ -111,17 +124,17 @@ void mergeSortOld(int* mass_first, int len) {
 			while (i2 < r) {
 				buff[index++] = mass[i2++];
 			}
-			
+
 			l += step * 2;
 			m += step * 2;
 			r += step * 2;
 		}
-		std::cout << "Шаг : " << step*2 << " - ";
+		std::cout << "Шаг : " << step * 2 << " - ";
 		for (int i = 0; i < len; i++) {// перезапись
 			mass[i] = buff[i];
 			pr++;
-			std::cout << mass[i] <<" ";
-			
+			std::cout << mass[i] << " ";
+
 		}
 		std::cout << "\n";
 		step *= 2;
@@ -131,13 +144,7 @@ void mergeSortOld(int* mass_first, int len) {
 	printMassiv(mass, len);
 	std::cout << "\nСравнений : " << sr << "\nПрисваиваний : " << pr << std::endl;
 }
-void DFP(int* mass_vs, int* mass_mn, int len) {
-	double* mass_sec = new double[len];
-	double compll = 2;
-	double vesh = 1;
-	double pi = 3.1415926535;
 
-}
 std::string Summ(std::string A, std::string B) {
 	std::string C;
 	while (A.length() != B.length()) {
@@ -262,8 +269,8 @@ std::string Multiply(std::string A, std::string B) {
 				Buf.erase(0, 1);
 			else
 				break;
-		
-			summa++;
+
+		summa++;
 		C = Summ(C, Buf);
 	}
 	if (A.length() == 1 || B.length() == 1)
@@ -271,148 +278,134 @@ std::string Multiply(std::string A, std::string B) {
 	for (int i = 0; i < (zerobackA + zerobackB); i++) {
 		C += '0';
 	}
-	std::cout << "Summa" << summa-1 << " Proizved" << mnozh << "\n";
+	std::cout << "Summa" << summa - 1 << " Proizved" << mnozh << "\n";
 	return C;
 }
+
 int svertka(int* a, int* b, int* c, int size_a, int size_b, int size_c) {
-	for (int k = 0; k < size_c; k++) {
-		std::cout << "C[" << k << "]=";
-		if (k < size_b) {
-			for (int i = 0; i <= k && i < size_a; i++) {
+	for (int k = 0; k < size_c; k++)
+	{
+		cout << "C[" << k << "]=";
+		if (k < size_b)
+		{
+			for (int i = 0; i <= k && i < size_a; i++)
+			{
 				c[k] += a[i] * b[k - i];
-				std::cout << "+A[" << i << "]*B[" << k - i << "]";
+				cout << "+A[" << i << "]*B[" << k - i << "]";
 			}
 
 		}
-		else {
+		else
+		{
 			for (int i = k - size_b + 1; i < size_a; i++) {
 				c[k] += a[i] * b[k - i];
-				std::cout << "+A[" << i << "]*B[" << k - i << "]";
+				cout <<"+A[" << i << "]*B[" << k - i << "]";
 			}
 		}
-		std::cout << "=" << c[k] << std::endl;
+		cout << "=" << c[k];
+		cout << endl;
 	}
 	return c[size_c - 1];
 }
-void merge(int arr[], int sizeForArr, int L[], int sizeForL, int R[], int sizeForR){
-	int i = 0;
-	int j = 0;
-	while (i < sizeForL || j < sizeForR){
-		if (i < sizeForL && j < sizeForR){
-			if (L[i] <= R[j]){
-				arr[i + j] = L[i];
-				++i;
-				++perep;
-			}
-			else{
-				arr[i + j] = R[j];
-				++j;
-				++perep;
-			}
-			++srav;
+void fourier(double* y, double** A, int SIZE)
+{
+	std::cout << "\n";
+	for (int k = 0; k < SIZE; k++) {
+		for (int j = 0; j < SIZE; j++) {
+			oper++;
+			double a = -2.0 * PI * k * j / SIZE;
+			A[0][k] += y[j] * cos(a);
+			A[1][k] -= y[j] * sin(a);
 		}
-		else if (i < sizeForL){
-			arr[i + j] = L[i];
-			++i;
-			++perep;
-		}
-		else if (j < sizeForR){
-			arr[i + j] = R[j];
-			++j;
-			++perep;
-		}
+		A[0][k] /= SIZE;
+		A[1][k] /= SIZE;
 	}
 }
-void merge_sort(int arr[], int size){
-	if (size > 1){
-		int middle = size / 2;
-		int rem = size - middle;
-		int* L = new int[middle];
-		int* R = new int[rem];
-		for (int i = 0; i < size; ++i){
-			if (i < middle){
-				L[i] = arr[i];
-			}
-			else{
-				R[i - middle] = arr[i];
-			}
+
+void inverseFourier(double** A, double** F, int SIZE)
+{
+	for (int k = 0; k < SIZE; k++) {
+		std::cout << k << "\n";
+		for (int j = 0; j < SIZE; j++) {
+			double a = 2.0 * PI * k * j / SIZE;
+			F[0][k] += A[0][j] * cos(a) - A[1][j] * sin(a);
+			F[1][k] += A[1][j] * cos(a) + A[0][j] * sin(a);
+			std::cout << F[0][k] << " " << F[1][k] << "\n";
 		}
-		merge_sort(L, middle);
-		merge_sort(R, rem);
-		merge(arr, size, L, middle, R, rem);
+
+	}
+}
+void printAll(double** A, double** FA, int SIZE)
+{
+	cout << "\nfourier: A\t\t\t" << "inverseFourier: A" << endl;
+	for (int i = 0; i < SIZE; ++i) {
+		cout << "( " << fixed << setprecision(4);
+		cout << A[0][i] << setw(5) << " , i" << fixed;
+		cout << setprecision(10) << A[1][i] << " )";
+		cout << "\t\t\t" << "( " << fixed << setprecision(1);
+		cout << FA[0][i] << setw(5) << " , i" << fixed;
+		cout << setprecision(10) << FA[1][i] << " )" << endl;
 	}
 }
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	int lenA = 8;
-	//std::cin >> lenA;
-	int* massA = new int [lenA];
-	for (int i = 0; i < lenA; i++) {
-		massA[i] = rand() % 9 + 1;
-	}
-	mergeSortOld(massA,lenA);
-	/*std::cout <<"\nМассив:\n";
-	printMassiv(massA, lenA);
-	merge_sort(massA,lenA);
-	std::cout << "Отсортированный:\n";
-	printMassiv(massA, lenA);
-	std::cout << "Сравнений " << srav << "\nПрисваиваний " << perep <<"\n";
-	*/
-	system("pause");
-	return 0;
-}
+	srand(time(NULL));
 
-/*
-	int* mass, *mass_vs, *mass_mn;
-	int len;
-	std::cin >> len;
-	mass = new int[len];
-	mass_vs = new int[len];
-	mass_mn = new int[len];
-	for (int i = 0; i < len; i++) {
-		std::cin >> mass[i];
-	}
-	*/
-	//bubleSort(mass, len);
-	//selectSort(mass,len);
-	//mergeSort(mass, len);
-	/*
-	DFP(mass_vs,mass_mn, len);
-	std::cout << mass_vs[0];
+	int size_A = 5, size_B = 3;
 
-	std::string A, B;
-	std::cin >> A >> B;
-	//Summ(A, B) // Divide(A,B)
-	std::cout  << Multiply(A,B) << "\n";
-
-	return 0;
-	*/
-	//int size_A = 2, size_B = 3;
-	/*
 	int size_C = size_A + size_B - 1;
-	int* a = new int [size_A];
-	int* b = new int [size_B];
-	int* c = new int [size_C];
+	int* a = new int[size_A];
+	int* b = new int[size_B];
+	int* c = new int[size_C] {};
 
-	for (int i = 0; i < A; i++) {
+	/*for (int i = 0; i < size_A; i++) {
 		a[i] = rand() % 9 + 1;
-	}
+	}*/
 
-	//a[0] = 9; a[1] = 7; a[2] = 8; a[3] = 3; a[4] = 2;
-	//b[0] = 6; b[1] = 6; b[2] = 3;
+	a[0] = 9; a[1] = 7; a[2] = 8; a[3] = 3; a[4] = 2;
+	b[0] = 6; b[1] = 6; b[2] = 3;
 
-	a[0] = 9; a[1] = 7; b[0] = 6; b[1] = 6; b[2] = 3;
+	//a[0] = 9; a[1] = 7; b[0] = 6; b[1] = 6; b[2] = 3;
 
 	printMassiv(a, size_A);
 	printMassiv(b, size_B);
 
 	int first_element;
-	if (size_A > size_B){
+	if (size_A > size_B) {
 		first_element = svertka(b, a, c, size_B, size_A, size_C);
 	}
-	else{
+	else {
 		first_element = svertka(a, b, c, size_A, size_B, size_C);
 	}
 	printMassiv(c, size_C);
-	*/
+	system("pause");
+	return 0;
+	
+
+	cout << "INPUT SIZE: "; cin >> size_A;
+
+	double* firstM = new double[size_A];
+	double** A = new double* [2];
+	double** FA = new double* [2];
+
+	for (int i = 0; i < size_A; i++) {
+		firstM[i] = rand() % 100;
+	}
+	firstM[0] = 87; firstM[1] = 46; firstM[2] = 30; firstM[3] = 86; firstM[4] = 7;
+	for (int i = 0; i < 2; i++) {
+		A[i] = new double[size_A] {};
+		FA[i] = new double[size_A] {};
+	}
+
+	printMassivDouble(firstM, size_A);
+	fourier(firstM, A, size_A);
+	inverseFourier(A, FA, size_A);
+
+	printAll(A, FA, size_A);
+	cout << oper << endl;
+
+	system("pause");
+	return 0;
+}
+
